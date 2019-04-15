@@ -10,7 +10,9 @@ using namespace std;
 using namespace sf; 
 
 //============================================================
-// YOUR HEADER WITH YOUR NAME GOES HERE. PLEASE DO NOT FORGET THIS
+// Aaron Hill
+// 4/6/19
+// program 7 space invaders
 //============================================================
 
 // note: a Sprite represents an image on screen. A sprite knows and remembers its own position
@@ -61,6 +63,20 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
+	Texture missileTexture;
+	if (!missileTexture.loadFromFile("missile.png"))
+	{
+		cout << "Unable to load missile texture!" << endl;
+		exit(EXIT_FAILURE);
+	}
+
+	Texture alienTexture;
+	if (!alienTexture.loadFromFile("alien.jpg"))
+	{
+		cout << "Unable to load alien texture!" << endl;
+		exit(EXIT_FAILURE);
+	}
+
 	// A sprite is a thing we can draw and manipulate on the screen.
 	// We have to give it a "texture" to specify what it looks like
 
@@ -73,12 +89,26 @@ int main()
 	Sprite ship;
 	ship.setTexture(shipTexture);
 
+	Sprite missile;
+	missile.setTexture(missileTexture);
+	bool isMissileInFlight = false;
+
+	Sprite alien;
+	alien.setTexture(alienTexture);
+	alien.setPosition(100, 100);
+	alien.setScale(.05, .05);
+	window.draw(alien);
 
 	// initial position of the ship will be approx middle of screen
 	float shipX = window.getSize().x / 2.0f;
 	float shipY = window.getSize().y / 2.0f;
 	ship.setPosition(shipX, shipY);
 
+	Font font;
+	font.loadFromFile("C:\\Windows\\Fonts\\Calibri.ttf");
+
+	Text startText("Start", font, 25);
+	startText.setPosition(200, 200);
 
 	while (window.isOpen())
 	{
@@ -95,11 +125,16 @@ int main()
 			{
 				if (event.key.code == Keyboard::Space)
 				{
-					// handle space bar
-				}
-				
+					isMissileInFlight = true;
+
+					Vector2f pos = ship.getPosition();
+					missile.setPosition(pos.x, pos.y);
+					window.draw(missile);
+				}			
 			}
 		}
+
+		
 
 		//===========================================================
 		// Everything from here to the end of the loop is where you put your
@@ -116,7 +151,20 @@ int main()
 		// draw the ship on top of background 
 		// (the ship from previous frame was erased when we drew background)
 		window.draw(ship);
+		window.draw(alien);
 
+if (isMissileInFlight)
+		{
+			missile.move(0, -5);
+			window.draw(missile);
+			float pos = missile.getPosition().y;
+			if (pos < -5)
+				isMissileInFlight = false;
+		}
+
+		int x = 0;
+		if (ship.getPosition().x == 0)
+		{}
 
 		// end the current frame; this makes everything that we have 
 		// already "drawn" actually show up on the screen
