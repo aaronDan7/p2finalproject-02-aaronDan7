@@ -24,4 +24,24 @@
       <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="alien.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="alienList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="missile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="multiMissile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bomb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="multiBomb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

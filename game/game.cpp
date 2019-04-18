@@ -5,9 +5,13 @@
 // project (moving the little green ship). 
 //========================================================
 #include <iostream>
+#include <iomanip>
+#include <string>
 using namespace std;
 #include <SFML/Graphics.hpp>
 using namespace sf; 
+#include "multiMissile.h"
+#include "multiBomb.h"
 
 //============================================================
 // Aaron Hill
@@ -15,11 +19,6 @@ using namespace sf;
 // program 7 space invaders
 //============================================================
 
-// note: a Sprite represents an image on screen. A sprite knows and remembers its own position
-// ship.move(offsetX, offsetY) adds offsetX, offsetY to 
-// the current position of the ship. 
-// x is horizontal, y is vertical. 
-// 0,0 is in the UPPER LEFT of the screen, y increases DOWN the screen
 void moveShip(Sprite& ship)
 {
 	const float DISTANCE = 5.0;
@@ -38,15 +37,20 @@ void moveShip(Sprite& ship)
 }
 
 
-
 int main()
 {
 	const int WINDOW_WIDTH = 800;
 	const int WINDOW_HEIGHT = 600;
 
-	RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "aliens!");
+	RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "invaders from space");
 	// Limit the framerate to 60 frames per second
 	window.setFramerateLimit(60);
+
+	Music music;
+	if (!music.openFromFile("song.ogg"))
+		return 0;
+
+	music.play();
 
 	// load textures from file into memory. This doesn't display anything yet.
 	// Notice we do this *before* going into animation loop.
@@ -56,13 +60,26 @@ int main()
 		cout << "Unable to load ship texture!" << endl;
 		exit(EXIT_FAILURE);
 	}
+	//Vector2u shipSize = shipTexture.getSize();
+
 	Texture starsTexture;
 	if (!starsTexture.loadFromFile("stars.jpg"))
 	{
 		cout << "Unable to load stars texture!" << endl;
 		exit(EXIT_FAILURE);
 	}
-
+	Texture alienTexture;
+	if (!alienTexture.loadFromFile("alien.jpg"))
+	{
+		cout << "Unable to load alien texture!" << endl;
+		exit(EXIT_FAILURE);
+	}
+	Texture bombTexture;
+	if (!bombTexture.loadFromFile("bomb.png"))
+	{
+		cout << "Unable to load bomb texture!" << endl;
+		exit(EXIT_FAILURE);
+	}
 	Texture missileTexture;
 	if (!missileTexture.loadFromFile("missile.png"))
 	{
@@ -70,48 +87,47 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	Texture alienTexture;
-	if (!alienTexture.loadFromFile("alien.jpg"))
-	{
-		cout << "Unable to load alien texture!" << endl;
-		exit(EXIT_FAILURE);
-	}
-
-	// A sprite is a thing we can draw and manipulate on the screen.
-	// We have to give it a "texture" to specify what it looks like
-
 	Sprite background;
 	background.setTexture(starsTexture);
-	// The texture file is 640x480, so scale it up a little to cover 800x600 window
-	background.setScale(1.5, 1.5);
+	//background.setScale(1.5, 1.5);
 
-	// create sprite and texture it
 	Sprite ship;
 	ship.setTexture(shipTexture);
 
-	Sprite missile;
-	missile.setTexture(missileTexture);
-	bool isMissileInFlight = false;
+	Sprite win;
+	Texture winTexture;
+	if (!winTexture.loadFromFile("win.png"))
+	{
+		cout << "Unable to load winner texture!" << endl;
+		exit(EXIT_FAILURE);
+	}
+	win.setTexture(winTexture);
 
-	Sprite alien;
-	alien.setTexture(alienTexture);
-	alien.setPosition(100, 100);
-	alien.setScale(.05, .05);
-	window.draw(alien);
+	Sprite lose;
+	Texture loseTexture;
+	if (!loseTexture.loadFromFile("lose.png"))
+	{
+		cout << "Unable to load loser texture!" << endl;
+		exit(EXIT_FAILURE);
+	}
+	lose.setTexture(loseTexture);
 
-	// initial position of the ship will be approx middle of screen
+
+	multiMissile missiles;
+	alienList alienWave;
+	multiBomb bombs;
+
 	float shipX = window.getSize().x / 2.0f;
-	float shipY = window.getSize().y / 2.0f;
+	float shipY = 550;
+
 	ship.setPosition(shipX, shipY);
+	alienWave.addAliens(alienTexture, 10, window.getSize());
+	string gameState = "playing";
 
-	Font font;
-	font.loadFromFile("C:\\Windows\\Fonts\\Calibri.ttf");
-
-	Text startText("Start", font, 25);
-	startText.setPosition(200, 200);
 
 	while (window.isOpen())
 	{
+
 		// check all the window's events that were triggered since the last iteration of the loop
 		// For now, we just need this so we can click on the window and close it
 		Event event;
@@ -121,62 +137,63 @@ int main()
 			// "close requested" event: we close the window
 			if (event.type == Event::Closed)
 				window.close();
-			else if (event.type == Event::KeyPressed)
+			if (event.type == Event::KeyPressed && gameState == "playing")
 			{
 				if (event.key.code == Keyboard::Space)
 				{
-					isMissileInFlight = true;
-
-					Vector2f pos = ship.getPosition();
-					missile.setPosition(pos.x, pos.y);
-					window.draw(missile);
-				}			
+					missiles.spawnMissile(missileTexture, ship.getPosition(), 2);
+				}
 			}
 		}
-
-		
-
-		//===========================================================
-		// Everything from here to the end of the loop is where you put your
-		// code to produce ONE frame of the animation. The next iteration of the loop will
-		// render the next frame, and so on. All this happens ~ 60 times/second.
-		//===========================================================
 
 		// draw background first, so everything that's drawn later 
 		// will appear on top of background
 		window.draw(background);
 
-		moveShip(ship);
-
-		// draw the ship on top of background 
-		// (the ship from previous frame was erased when we drew background)
-		window.draw(ship);
-		window.draw(alien);
-
-if (isMissileInFlight)
+		// manage gamemode
+		if (gameState == "playing")
 		{
-			missile.move(0, -5);
-			window.draw(missile);
-			float pos = missile.getPosition().y;
-			if (pos < -5)
-				isMissileInFlight = false;
-		}
+			moveShip(ship);
+			window.draw(ship);
 
-		int x = 0;
-		if (ship.getPosition().x == 0)
-		{}
+			if (!(alienWave.moveAlienWave(window, 0.3, shipY)))
+			{
+				gameState = "lose"; // if empty, game win
+			}
+			// render/move/check collisions for bombs
+			if (bombs.bombTimer(300, 50))
+			{
+				bombs.spawnBomb(bombTexture, alienWave.getBombPos()); // hard code
+			}
+			if (bombs.moveBombs(window, ship.getGlobalBounds(), 0.7))
+			{
+				gameState = "lose";
+			}
+			// render/move/check collisions for missiles
+			missiles.moveMissiles(window, alienWave, bombs);
+
+			if ((gameState == "playing") && (alienWave.getWin()))
+			{
+				gameState = "win"; // change game state if all aliens defeated
+			}
+		}
+		if (gameState == "win")
+		{
+			window.draw(win);
+
+		}
+		if (gameState == "lose")
+		{
+			window.draw(lose);
+		}
 
 		// end the current frame; this makes everything that we have 
 		// already "drawn" actually show up on the screen
 		window.display();
 
-		// At this point the frame we have built is now visible on screen.
-		// Now control will go back to the top of the animation loop
-		// to build the next frame. Since we begin by drawing the
-		// background, each frame is rebuilt from scratch.
-
 	} // end body of animation loop
 
 	return 0;
 }
+
 
