@@ -36,17 +36,17 @@ public:
 	bool moveAlienWave(RenderWindow &window, float speed)
 	{
 		bool keepMoving = true;
-		list<alien>::iterator iter = alienWave.begin();
-		iter->moveDown(speed);
-		if (iter->getYPos() > 590) keepMoving = false;
-		window.draw(iter->getSprite());
-		iter++;
+		list<alien>::iterator index = alienWave.begin();
+		index->moveDown(speed);
+		if (index->getYPos() > 590) keepMoving = false;
+		window.draw(index->getSprite());
+		index++;
 
-		while (iter != alienWave.end())
+		while (index != alienWave.end())
 		{
-			iter->moveDown(speed);
-			window.draw(iter->getSprite());
-			iter++;
+			index->moveDown(speed);
+			window.draw(index->getSprite());
+			index++;
 		}
 		return keepMoving;
 	}
@@ -58,10 +58,10 @@ public:
 		unsigned seed = time(0);
 		srand(seed);
 		int alienToDrop = rand() % alienWave.size(); 
-		list<alien>::iterator iter;
-		iter = alienWave.begin();
-		for (int i = 0; i < alienToDrop; i++) iter++;
-		bombPos = iter->getPos();
+		list<alien>::iterator index;
+		index = alienWave.begin();
+		for (int i = 0; i < alienToDrop; i++) index++;
+		bombPos = index->getPos();
 		bombPos.y += 1.0f;
 		bombPos.x += 1.0f;
 		return bombPos;
@@ -71,19 +71,19 @@ public:
 	bool checkCollision(FloatRect missileBounds)
 	{
 		bool hit = false;
-		list<alien>::iterator iter;
-		iter = alienWave.begin();
-		while (iter != alienWave.end() && !hit)
+		list<alien>::iterator index;
+		index = alienWave.begin();
+		while (index != alienWave.end() && !hit)
 		{
-			if (missileBounds.intersects(iter->getCollision()))
+			if (missileBounds.intersects(index->getCollision()))
 			{
 				hit = true;
 			}
-			else iter++;
+			else index++;
 		}		
 		if (hit)
 		{
-			alienWave.erase(iter);
+			alienWave.erase(index);
 
 		}
 		return hit;

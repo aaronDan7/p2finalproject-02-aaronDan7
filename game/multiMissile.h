@@ -38,26 +38,26 @@ public:
 		button temp;
 
 		if (startDelay > 0) startDelay--;
-		list<Missile>::iterator iter;
-		for (iter = missileList.begin(); iter != missileList.end();)
+		list<Missile>::iterator index;
+		for (index = missileList.begin(); index != missileList.end();)
 		{
 
-			if (!(iter->moveUp())) // delete missed shots
+			if (!(index->moveUp())) // delete missed shots
 			{
-				iter = missileList.erase(iter);
+				index = missileList.erase(index);
 			}
-			else if (wave.checkCollision(iter->getCollision()))
+			else if (wave.checkCollision(index->getCollision()))
 			{
 				// if hit delete missile
-				iter = missileList.erase(iter);
+				index = missileList.erase(index);
 
 				kills++;
 				
 			}
 			else
 			{
-				window.draw(iter->getSprite());
-				iter++;
+				window.draw(index->getSprite());
+				index++;
 			}
 		}
 		return kills;

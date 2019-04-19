@@ -32,23 +32,23 @@ public:
 	bool moveBombs(RenderWindow &window, FloatRect shipBounds, float speed)
 	{
 		bool hit = false; 
-		list<Bomb>::iterator iter;
-		for (iter = bombList.begin(); iter != bombList.end();)
+		list<Bomb>::iterator index;
+		for (index = bombList.begin(); index != bombList.end();)
 		{
 
-			if (!(iter->moveDown(window.getSize().y, speed)))
+			if (!(index->moveDown(window.getSize().y, speed)))
 			{
-				iter = bombList.erase(iter);
+				index = bombList.erase(index);
 			}
-			else if (iter->getCollision().intersects(shipBounds)) 
+			else if (index->getCollision().intersects(shipBounds)) 
 			{
-				iter = bombList.erase(iter);
+				index = bombList.erase(index);
 				hit = true;
 			}
 			else
 			{
-				window.draw(iter->getSprite());
-				iter++;
+				window.draw(index->getSprite());
+				index++;
 			}
 		}
 		return hit;
