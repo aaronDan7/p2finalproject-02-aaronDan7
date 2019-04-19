@@ -12,6 +12,7 @@ using namespace std;
 using namespace sf; 
 #include "multiMissile.h"
 #include "multiBomb.h"
+#include "buttons.h"
 
 //============================================================
 // Aaron Hill
@@ -48,7 +49,10 @@ int main()
 
 	Music music;
 	if (!music.openFromFile("song.ogg"))
-		return 0;
+	{
+		cout << "Unable to load music!" << endl;
+		exit(EXIT_FAILURE);
+	}
 
 	music.play();
 
@@ -60,7 +64,6 @@ int main()
 		cout << "Unable to load ship texture!" << endl;
 		exit(EXIT_FAILURE);
 	}
-	//Vector2u shipSize = shipTexture.getSize();
 
 	Texture starsTexture;
 	if (!starsTexture.loadFromFile("stars.jpg"))
@@ -93,6 +96,10 @@ int main()
 
 	Sprite ship;
 	ship.setTexture(shipTexture);
+	Sprite ship2;
+	ship.setTexture(shipTexture);
+	Sprite ship3;
+	ship.setTexture(shipTexture);
 
 	Sprite win;
 	Texture winTexture;
@@ -114,17 +121,24 @@ int main()
 
 
 	multiMissile missiles;
-	alienList alienWave;
+	alienList waveOne;
+	alienList waveTwo;
 	multiBomb bombs;
 
 	float shipX = window.getSize().x / 2.0f;
 	float shipY = 550;
 
 	ship.setPosition(shipX, shipY);
-	alienWave.addAliens(alienTexture, 10, window.getSize());
-	string gameState = "playing";
 
+	waveOne.addAliens(alienTexture, 10, window.getSize());
+	waveTwo.addAliens(alienTexture, 10, window.getSize());
 
+	int deathCount = 3;
+	button livesRemain;
+	string gameControl = "paused";
+
+	button txtDisplay;
+	bool start = false;
 	while (window.isOpen())
 	{
 
@@ -132,12 +146,30 @@ int main()
 		// For now, we just need this so we can click on the window and close it
 		Event event;
 
+		if (!start)
+		{
+
+			while (window.pollEvent(event))
+			{
+				if (event.type == Event::MouseButtonReleased)
+				{
+					Vector2f mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
+					start = txtDisplay.getStart(mousePos);
+					gameControl = "playing";
+				}
+			}
+			
+			window.clear();
+			txtDisplay.displayStart(window);
+			window.display();
+		}
+
 		while (window.pollEvent(event))
 		{
 			// "close requested" event: we close the window
 			if (event.type == Event::Closed)
 				window.close();
-			if (event.type == Event::KeyPressed && gameState == "playing")
+			if (event.type == Event::KeyPressed && gameControl == "playing")
 			{
 				if (event.key.code == Keyboard::Space)
 				{
@@ -149,40 +181,95 @@ int main()
 		// draw background first, so everything that's drawn later 
 		// will appear on top of background
 		window.draw(background);
+		txtDisplay.displayLives(window, deathCount);
 
 		// manage gamemode
-		if (gameState == "playing")
+		if (gameControl == "playing")
 		{
 			moveShip(ship);
 			window.draw(ship);
 
-			if (!(alienWave.moveAlienWave(window, 0.3, shipY)))
+			if (!(waveOne.moveAlienWave(window, 0.3)))
 			{
-				gameState = "lose"; // if empty, game win
+				gameControl = "lose";
 			}
-			// render/move/check collisions for bombs
-			if (bombs.bombTimer(300, 50))
+			
+			if (bombs.bombTimer(300, 50)) // hard code bomb timing
 			{
-				bombs.spawnBomb(bombTexture, alienWave.getBombPos()); // hard code
+				bombs.spawnBomb(bombTexture, waveOne.getBombPos());
+			}
+
+			// check deaths / set bomb speed
+			if (bombs.moveBombs(window, ship.getGlobalBounds(), 0.6))
+			{
+				if (deathCount > 2)
+				{
+					deathCount--;
+					window.draw(ship2);
+				}
+				else if (deathCount > 1)
+				{
+					deathCount--;
+					window.draw(ship3);
+				}
+				else
+				gameControl = "lose";
+			}
+			missiles.moveMissiles(window, waveOne, bombs);
+			
+
+			if ((gameControl == "playing") && (waveOne.getWin()))
+			{
+				
+				gameControl = "round2"; // change levels
+			}
+		} 
+		
+		// repeat code for level 2
+		if (gameControl == "round2")
+		{
+			moveShip(ship);
+			window.draw(ship);
+
+			if (!(waveTwo.moveAlienWave(window, 0.3)))
+			{
+				gameControl = "lose";
+			}
+			 
+			if (bombs.bombTimer(100, 20)) // hard code bomb timing
+			{
+				bombs.spawnBomb(bombTexture, waveTwo.getBombPos()); 
 			}
 			if (bombs.moveBombs(window, ship.getGlobalBounds(), 0.7))
 			{
-				gameState = "lose";
+				if (deathCount > 2)
+				{
+					deathCount--;
+					window.draw(ship2);
+				}
+				else if (deathCount > 1)
+				{
+					deathCount--;
+					window.draw(ship3);
+				}
+				else
+					gameControl = "lose";
 			}
-			// render/move/check collisions for missiles
-			missiles.moveMissiles(window, alienWave, bombs);
+			
+			missiles.moveMissiles(window, waveTwo, bombs);
 
-			if ((gameState == "playing") && (alienWave.getWin()))
+			if ((gameControl == "playing") && (waveTwo.getWin()))
 			{
-				gameState = "win"; // change game state if all aliens defeated
+				gameControl = "win"; // end game
 			}
 		}
-		if (gameState == "win")
+		
+		if (gameControl == "win")
 		{
 			window.draw(win);
 
 		}
-		if (gameState == "lose")
+		if (gameControl == "lose")
 		{
 			window.draw(lose);
 		}

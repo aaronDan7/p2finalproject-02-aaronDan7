@@ -155,6 +155,7 @@
     <ClInclude Include="alien.h" />
     <ClInclude Include="alienList.h" />
     <ClInclude Include="bomb.h" />
+    <ClInclude Include="buttons.h" />
     <ClInclude Include="missile.h" />
     <ClInclude Include="multiBomb.h" />
     <ClInclude Include="multiMissile.h" />

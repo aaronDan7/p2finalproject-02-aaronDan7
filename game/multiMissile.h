@@ -43,7 +43,7 @@ public:
 			}
 			else if (wave.checkCollision(iter->getCollision())) // missile hit alien
 			{
-				// collision check action
+				// if hit, delete missile
 				iter = bombList.erase(iter);
 			}
 			else

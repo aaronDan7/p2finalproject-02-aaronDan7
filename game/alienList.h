@@ -33,13 +33,12 @@ public:
 
 	// handle missile movement, collison / action, drawing
 	// if aliens reach bottom of screen, 
-	bool moveAlienWave(RenderWindow &win, float speed, int shipYPos)
+	bool moveAlienWave(RenderWindow &win, float speed)
 	{
 		bool keepMoving = true; // true until aliens reach the bottom
 		list<alien>::iterator iter = alienWave.begin();
-		// move first missile, check if missiles have reached ship
 		iter->moveDown(speed);
-		if (iter->getYPos() > shipYPos) keepMoving = false;
+		if (iter->getYPos() > 590) keepMoving = false;
 		win.draw(iter->getSprite());
 		iter++;
 
@@ -50,22 +49,6 @@ public:
 			iter++;
 		}
 		return keepMoving;
-	}
-
-	// check all aliens' collisions against individual missile, if hit, destroy alien
-	// return true to tell missiles to destroy missile
-	bool checkCollision(FloatRect missileBounds)
-	{
-		bool hit = false; // if hit is true, return to delete in main
-		list<alien>::iterator iter;
-		iter = alienWave.begin();
-		while (iter != alienWave.end() && !hit)
-		{
-			if (missileBounds.intersects(iter->getCollision())) hit = true;
-			else iter++;
-		}
-		if (hit) iter = alienWave.erase(iter);
-		return hit;
 	}
 
 	// get an alien for a bomb position
@@ -82,6 +65,22 @@ public:
 		bombPos.y += 1.0f;
 		bombPos.x += 1.0f;
 		return bombPos;
+	}
+
+	// check all aliens' collisions against individual missile, if hit, destroy alien
+	// return true to tell missiles to destroy missile
+	bool checkCollision(FloatRect missileBounds)
+	{
+		bool hit = false; // if hit is true, return to delete in main
+		list<alien>::iterator iter;
+		iter = alienWave.begin();
+		while (iter != alienWave.end() && !hit)
+		{
+			if (missileBounds.intersects(iter->getCollision())) hit = true;
+			else iter++;
+		}
+		if (hit) iter = alienWave.erase(iter);
+		return hit;
 	}
 
 	// return true if no aliens left
