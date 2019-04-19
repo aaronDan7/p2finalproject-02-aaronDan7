@@ -6,11 +6,11 @@ using namespace sf;
 using namespace std;
 
 
+// for start buttons and in game text
 class button
 {
 private:
 	RectangleShape start;
-	RectangleShape lives;
 	Font font;
 public:
 	//create text box
@@ -49,11 +49,21 @@ public:
 	}
 
 	// show life counter
-	void displayLives(RenderWindow & window, int d)
+	void displayLives(RenderWindow & window, int i)
 	{
-		string text = "lives remaining:  " + to_string(d-1);
+		string text = "lives remaining:  " + to_string(i-1);
 		Text display(text, font, 20);
 		display.setPosition(0, 0);
+		display.setFillColor(Color::White);
+		window.draw(display);
+	}
+
+	//shows kill counter
+	void displayKills(RenderWindow & window, int i)
+	{
+		string text = "aliens killed:  " + to_string(i);
+		Text display(text, font, 20);
+		display.setPosition(0, 570);
 		display.setFillColor(Color::White);
 		window.draw(display);
 	}

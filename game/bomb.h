@@ -40,6 +40,4 @@ public:
 	{
 		return bombSprite.getGlobalBounds();
 	}
-
-	
 };

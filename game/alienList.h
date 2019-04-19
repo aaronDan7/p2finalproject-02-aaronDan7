@@ -7,13 +7,14 @@ using namespace sf;
 using namespace std;
 #include "alien.h"
 
+
 class alienList
 {
 private:
 	list<alien> alienWave;
 public:
 	// create an alien
-	void spawnAlien(Texture &alienTexture, Vector2f alienPos)
+	void createAlien(Texture &alienTexture, Vector2f alienPos)
 	{
 		alien newAlien(alienTexture, alienPos);
 		alienWave.push_back(newAlien);
@@ -27,31 +28,31 @@ public:
 		for (float i = 1; i <= num; i++)
 		{
 			alienPos.x = (windowBounds.x * (i + 1.0f)) / (num + 2.0f) - 50;
-			spawnAlien(alienTexture, alienPos);
+			createAlien(alienTexture, alienPos);
 		}
 	}
 
 	// keeps aliens moving
-	bool moveAlienWave(RenderWindow &win, float speed)
+	bool moveAlienWave(RenderWindow &window, float speed)
 	{
 		bool keepMoving = true;
 		list<alien>::iterator iter = alienWave.begin();
 		iter->moveDown(speed);
 		if (iter->getYPos() > 590) keepMoving = false;
-		win.draw(iter->getSprite());
+		window.draw(iter->getSprite());
 		iter++;
 
 		while (iter != alienWave.end())
 		{
 			iter->moveDown(speed);
-			win.draw(iter->getSprite());
+			window.draw(iter->getSprite());
 			iter++;
 		}
 		return keepMoving;
 	}
 
 	// pick randon aliens to drop bombs
-	Vector2f getBombPos()
+	Vector2f setBombPos()
 	{
 		Vector2f bombPos;
 		unsigned seed = time(0);
@@ -70,7 +71,6 @@ public:
 	bool checkCollision(FloatRect missileBounds)
 	{
 		bool hit = false;
-		list<alien>::iterator end;
 		list<alien>::iterator iter;
 		iter = alienWave.begin();
 		while (iter != alienWave.end() && !hit)
@@ -80,8 +80,12 @@ public:
 				hit = true;
 			}
 			else iter++;
+		}		
+		if (hit)
+		{
+			alienWave.erase(iter);
+
 		}
-		if (hit) iter = alienWave.erase(iter);
 		return hit;
 	}
 

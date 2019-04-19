@@ -24,13 +24,13 @@ void moveShip(Sprite& ship)
 {
 	const float DISTANCE = 5.0;
 
-	if (Keyboard::isKeyPressed(Keyboard::Left))
+	if (Keyboard::isKeyPressed(Keyboard::Left) && ship.getPosition().x > 0)
 	{
 		// left arrow is pressed: move our ship left 5 pixels
 		// 2nd parm is y direction. We don't want to move up/down, so it's zero.
 		ship.move(-DISTANCE, 0);
 	}
-	else if (Keyboard::isKeyPressed(Keyboard::Right))
+	else if (Keyboard::isKeyPressed(Keyboard::Right) && ship.getPosition().x < 780)
 	{
 		// right arrow is pressed: move our ship right 5 pixels
 		ship.move(DISTANCE, 0);
@@ -129,6 +129,7 @@ int main()
 	multiMissile missiles;
 	alienList waveOne;
 	alienList waveTwo;
+	alienList crash;
 	multiBomb bombs;
 
 	float shipX = window.getSize().x / 2.0f;
@@ -138,8 +139,10 @@ int main()
 
 	waveOne.addAliens(alienTexture, 10, window.getSize());
 	waveTwo.addAliens(alien2T, 10, window.getSize());
+	crash.addAliens(alien2T, 10, window.getSize());
 
 	int lifeCount = 3;
+	int kills = 0;
 	button livesRemain;
 	string gameControl = "paused";
 
@@ -179,7 +182,7 @@ int main()
 			{
 				if (event.key.code == Keyboard::Space)
 				{
-					missiles.spawnMissile(missileTexture, ship.getPosition(), 20); // hard code 10 to delay spamfire
+					missiles.createMissile(missileTexture, ship.getPosition(), 20); // hard code 20 to delay spamfire
 				}
 			}
 		}
@@ -188,6 +191,7 @@ int main()
 		// will appear on top of background
 		window.draw(background);
 		txtDisplay.displayLives(window, lifeCount);
+		txtDisplay.displayKills(window, kills);
 
 		// manage gamemode
 		if (gameControl == "playing")
@@ -202,7 +206,7 @@ int main()
 			
 			if (bombs.bombTimer(300, 50)) // hard code bomb timing
 			{
-				bombs.spawnBomb(bombTexture, waveOne.getBombPos());
+				bombs.spawnBomb(bombTexture, waveOne.setBombPos());
 			}
 
 			// check deaths / set bomb speed
@@ -222,7 +226,7 @@ int main()
 				gameControl = "lose";
 			}
 
-			missiles.moveMissiles(window, waveOne);
+			kills =	missiles.moveMissiles(window, waveOne);
 			
 
 			if ((gameControl == "playing") && (waveOne.getWin()))
@@ -245,7 +249,7 @@ int main()
 			 
 			if (bombs.bombTimer(70, 20)) // hard code bomb timing
 			{
-				bombs.spawnBomb(bombTexture, waveTwo.getBombPos()); 
+				bombs.spawnBomb(bombTexture, waveTwo.setBombPos()); 
 			}
 			if (bombs.moveBombs(window, ship.getGlobalBounds(), 0.9))
 			{
@@ -264,9 +268,9 @@ int main()
 					gameControl = "lose";
 				}
 			}		
-			missiles.moveMissiles(window, waveTwo);
+			kills =	missiles.moveMissiles(window, waveTwo);
 
-			if ((gameControl == "playing") && (waveTwo.getWin()))
+			if ((gameControl == "round2") && (waveTwo.getWin()))
 			{
 				gameControl = "win"; // end game
 			}
@@ -300,6 +304,7 @@ int main()
 				txtDisplay.displayStart(window);
 				window.display();
 				lifeCount = 3;
+				kills = 0;
 			}
 		}
 
