@@ -32,7 +32,7 @@ public:
 		}
 	}
 
-	// move missiles and check collisions
+	// move missiles and check collisions for successful shots
 	int moveMissiles(RenderWindow &window, alienList &wave)
 	{
 		button temp;
