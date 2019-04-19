@@ -76,20 +76,4 @@ public:
 		}
 		return hit;
 	}
-
-	// check collisions w/ missiles
-	// return true if hit
-	bool checkCollision(FloatRect missileBounds)
-	{
-		bool hit = false; // if a hit with the input rect is detected, return such
-		list<Bomb>::iterator iter;
-		iter = bombList.begin();
-		while (iter != bombList.end() && !hit)
-		{
-			if (missileBounds.intersects(iter->getCollision())) hit = true;
-			else iter++;
-		}
-		if (hit) iter = bombList.erase(iter);
-		return hit;
-	}
 };

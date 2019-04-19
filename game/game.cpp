@@ -118,7 +118,7 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 	lose.setTexture(loseTexture);
-
+	lose.setPosition(0, 0);
 
 	multiMissile missiles;
 	alienList waveOne;
@@ -133,7 +133,7 @@ int main()
 	waveOne.addAliens(alienTexture, 10, window.getSize());
 	waveTwo.addAliens(alienTexture, 10, window.getSize());
 
-	int deathCount = 3;
+	int lifeCount = 3;
 	button livesRemain;
 	string gameControl = "paused";
 
@@ -181,7 +181,7 @@ int main()
 		// draw background first, so everything that's drawn later 
 		// will appear on top of background
 		window.draw(background);
-		txtDisplay.displayLives(window, deathCount);
+		txtDisplay.displayLives(window, lifeCount);
 
 		// manage gamemode
 		if (gameControl == "playing")
@@ -202,14 +202,14 @@ int main()
 			// check deaths / set bomb speed
 			if (bombs.moveBombs(window, ship.getGlobalBounds(), 0.6))
 			{
-				if (deathCount > 2)
+				if (lifeCount > 2)
 				{
-					deathCount--;
+					lifeCount--;
 					window.draw(ship2);
 				}
-				else if (deathCount > 1)
+				else if (lifeCount > 1)
 				{
-					deathCount--;
+					lifeCount--;
 					window.draw(ship3);
 				}
 				else
@@ -231,7 +231,7 @@ int main()
 			moveShip(ship);
 			window.draw(ship);
 
-			if (!(waveTwo.moveAlienWave(window, 0.3)))
+			if (!(waveTwo.moveAlienWave(window, 0.6)))
 			{
 				gameControl = "lose";
 			}
@@ -242,14 +242,14 @@ int main()
 			}
 			if (bombs.moveBombs(window, ship.getGlobalBounds(), 0.7))
 			{
-				if (deathCount > 2)
+				if (lifeCount > 2)
 				{
-					deathCount--;
+					lifeCount--;
 					window.draw(ship2);
 				}
-				else if (deathCount > 1)
+				else if (lifeCount > 1)
 				{
-					deathCount--;
+					lifeCount--;
 					window.draw(ship3);
 				}
 				else
@@ -267,11 +267,30 @@ int main()
 		if (gameControl == "win")
 		{
 			window.draw(win);
-
 		}
 		if (gameControl == "lose")
 		{
-			window.draw(lose);
+			start = false;
+			
+			if (!start)
+			{
+
+				while (window.pollEvent(event))
+				{
+					if (event.type == Event::MouseButtonReleased)
+					{
+						Vector2f mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
+						start = txtDisplay.getStart(mousePos);
+						gameControl = "playing";
+					}
+				}
+
+				window.clear();
+				window.draw(lose);
+				txtDisplay.displayStart(window);
+				window.display();
+				lifeCount = 3;
+			}
 		}
 
 		// end the current frame; this makes everything that we have 
