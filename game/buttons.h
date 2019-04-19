@@ -13,13 +13,14 @@ private:
 	RectangleShape lives;
 	Font font;
 public:
+	//create text box
 	button()
 	{
 		Vector2f size;
 		size.x = 200;
 		size.y = 100;
 		start.setSize(size);
-		start.setPosition(300, 200);
+		start.setPosition(250, 200);
 		start.setFillColor(Color::Black);
 
 		if (!font.loadFromFile("C://Windows//Fonts//calibri.ttf"))
@@ -27,16 +28,18 @@ public:
 			cout << ("couldn't load font");
 		}
 	}
-
+	
+	// display the start button
 	void displayStart(RenderWindow & win)
 	{
-		Text text("start", font, 50);
+		Text text("start", font, 60);
 		text.setPosition(start.getPosition());
 		text.setFillColor(Color::White);
 		win.draw(start);
 		win.draw(text);
 	}
 
+	// interact with start
 	bool getStart(Vector2f mousepos)
 	{
 		if (start.getGlobalBounds().contains(mousepos))
@@ -45,6 +48,7 @@ public:
 		}
 	}
 
+	// show life counter
 	void displayLives(RenderWindow & window, int d)
 	{
 		string text = "lives remaining:  " + to_string(d-1);

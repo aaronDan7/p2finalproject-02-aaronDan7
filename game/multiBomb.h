@@ -15,18 +15,18 @@ private:
 	list<Bomb> bombList;
 	int spawnDelay;
 public:
+	// constructer starts alien bombs with wait time
 	multiBomb()
 	{
-		spawnDelay = 30;
+		spawnDelay = 20;
 	}
 
-	// if time for a bomb drop, 
+	// randomize bomb drops
 	bool bombTimer(int maxTime, int minTime)
 	{
-		bool over = false; // return value; communicates if wait time is over
+		bool over = false; 
 		if (spawnDelay <= 0)
 		{
-			// if wait time up, reset, generate missile
 			over = true;
 			unsigned seed = time(0);
 			srand(seed);
@@ -34,7 +34,6 @@ public:
 		}
 		else
 		{
-			// decrement wait time
 			spawnDelay--;
 		}
 		return over;
@@ -47,24 +46,20 @@ public:
 		bombList.push_back(newBomb);
 	}
 
-	// handle bomb movement, collison / action, drawing
-	// return true if hit player
-	// takes in window ref (rendering, window bounds check), shipbounds (collision)
-	// speed for downward movement
+	// moves and checks for hits with player
 	bool moveBombs(RenderWindow &win, FloatRect shipBounds, float speed)
 	{
-		bool hit = false; // if a hit, destroy missile, return true to destroy ship
+		bool hit = false; 
 		list<Bomb>::iterator iter;
 		for (iter = bombList.begin(); iter != bombList.end();)
 		{
 
-			if (!(iter->moveDown(win.getSize().y, speed))) // if missile can't move up, despawn
+			if (!(iter->moveDown(win.getSize().y, speed)))
 			{
 				iter = bombList.erase(iter);
 			}
-			else if (iter->getCollision().intersects(shipBounds)) // alien collision check; check collisions w/ all  aliens
+			else if (iter->getCollision().intersects(shipBounds)) 
 			{
-				// collision check action
 				iter = bombList.erase(iter);
 				hit = true;
 			}

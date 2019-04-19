@@ -169,7 +169,7 @@ int main()
 			// "close requested" event: we close the window
 			if (event.type == Event::Closed)
 				window.close();
-			if (event.type == Event::KeyPressed && gameControl == "playing")
+			if (event.type == Event::KeyPressed && gameControl == "playing" || "round2")
 			{
 				if (event.key.code == Keyboard::Space)
 				{
@@ -215,7 +215,8 @@ int main()
 				else
 				gameControl = "lose";
 			}
-			missiles.moveMissiles(window, waveOne, bombs);
+
+			missiles.moveMissiles(window, waveOne);
 			
 
 			if ((gameControl == "playing") && (waveOne.getWin()))
@@ -254,16 +255,16 @@ int main()
 				}
 				else
 					gameControl = "lose";
-			}
-			
-			missiles.moveMissiles(window, waveTwo, bombs);
+			}		
+			missiles.moveMissiles(window, waveTwo);
 
 			if ((gameControl == "playing") && (waveTwo.getWin()))
 			{
 				gameControl = "win"; // end game
 			}
-		}
-		
+		}	
+
+		// set game end/ restart
 		if (gameControl == "win")
 		{
 			window.draw(win);

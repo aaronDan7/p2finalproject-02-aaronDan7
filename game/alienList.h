@@ -10,7 +10,7 @@ using namespace std;
 class alienList
 {
 private:
-	list<alien> alienWave; // hold all the aliens on screen
+	list<alien> alienWave;
 public:
 	// create an alien
 	void spawnAlien(Texture &alienTexture, Vector2f alienPos)
@@ -19,7 +19,7 @@ public:
 		alienWave.push_back(newAlien);
 	}
 
-	// add a group of aliens usign spawn alien method
+	// creat a wave of aliens
 	void addAliens(Texture &alienTexture, float num, Vector2u windowBounds)
 	{
 		Vector2f alienPos(0.0f, 0.0f);
@@ -31,11 +31,10 @@ public:
 		}
 	}
 
-	// handle missile movement, collison / action, drawing
-	// if aliens reach bottom of screen, 
+	// keeps aliens moving
 	bool moveAlienWave(RenderWindow &win, float speed)
 	{
-		bool keepMoving = true; // true until aliens reach the bottom
+		bool keepMoving = true;
 		list<alien>::iterator iter = alienWave.begin();
 		iter->moveDown(speed);
 		if (iter->getYPos() > 590) keepMoving = false;
@@ -51,13 +50,13 @@ public:
 		return keepMoving;
 	}
 
-	// get an alien for a bomb position
+	// pick randon aliens to drop bombs
 	Vector2f getBombPos()
 	{
 		Vector2f bombPos;
 		unsigned seed = time(0);
 		srand(seed);
-		int alienToDrop = rand() % alienWave.size(); // the alien in the order that drops the bomb
+		int alienToDrop = rand() % alienWave.size(); 
 		list<alien>::iterator iter;
 		iter = alienWave.begin();
 		for (int i = 0; i < alienToDrop; i++) iter++;
@@ -67,11 +66,10 @@ public:
 		return bombPos;
 	}
 
-	// check all aliens' collisions against individual missile, if hit, destroy alien
-	// return true to tell missiles to destroy missile
+	// check aliens for missile collision
 	bool checkCollision(FloatRect missileBounds)
 	{
-		bool hit = false; // if hit is true, return to delete in main
+		bool hit = false;
 		list<alien>::iterator iter;
 		iter = alienWave.begin();
 		while (iter != alienWave.end() && !hit)

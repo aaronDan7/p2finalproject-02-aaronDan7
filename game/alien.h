@@ -15,13 +15,13 @@ public:
 		singleAlien.setPosition(alienPos.x, alienPos.y);
 	}
 
-	// move alien towards player
+	// move alien down
 	void moveDown(float speed)
 	{
 		singleAlien.move(0, speed);
 	}
 
-	// send position for bomb creation
+	// send position for bombs
 	Vector2f getPos()
 	{
 		return singleAlien.getPosition();

@@ -11,9 +11,10 @@ using namespace std;
 class multiMissile
 {
 private:
-	list<Missile> bombList;
+	list<Missile> missileList;
 	int spawnDelay;
 public:
+	//instant fire//constructor
 	multiMissile()
 	{
 		spawnDelay = 0;
@@ -23,28 +24,28 @@ public:
 	{
 		if (spawnDelay <= 0)
 		{
-			Missile nMissile(missileTexture, shipPos);
-			bombList.push_back(nMissile);
+			Missile newMissile(missileTexture, shipPos);
+			missileList.push_back(newMissile);
 			spawnDelay = spawnWaitTime;
 		}
 	}
 
 	// move missiles and check collisions
-	void moveMissiles(RenderWindow &win, alienList &wave, multiBomb &bombs)
+	void moveMissiles(RenderWindow &win, alienList &wave)
 	{
 		if (spawnDelay > 0) spawnDelay--;
 		list<Missile>::iterator iter;
-		for (iter = bombList.begin(); iter != bombList.end();)
+		for (iter = missileList.begin(); iter != missileList.end();)
 		{
 
 			if (!(iter->moveUp())) // delete missed shots
 			{
-				iter = bombList.erase(iter);
+				iter = missileList.erase(iter);
 			}
-			else if (wave.checkCollision(iter->getCollision())) // missile hit alien
+			else if (wave.checkCollision(iter->getCollision()))
 			{
-				// if hit, delete missile
-				iter = bombList.erase(iter);
+				// if hit delete missile
+				iter = missileList.erase(iter);
 			}
 			else
 			{

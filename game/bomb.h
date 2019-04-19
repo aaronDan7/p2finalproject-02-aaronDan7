@@ -5,7 +5,7 @@ using namespace sf;
 class Bomb
 {
 private:
-	Sprite  bombSprite; // sprite depicting missile, holding location
+	Sprite  bombSprite;
 public:
 	// constructor
 	Bomb(Texture &bombTexture, Vector2f alienPos)
@@ -14,10 +14,10 @@ public:
 		bombSprite.setPosition(alienPos.x + (2 * bombTexture.getSize().x - 30), alienPos.y + 20);
 	}
 
-	// check input adn set speed
+	// check input and set speed
 	bool moveDown(float windH, float speed)
 	{
-		bool continueFlight = true; // tell program to delete dynamically alocated sprite if true
+		bool continueFlight = true; 
 		if (bombSprite.getPosition().y < windH)
 		{
 			bombSprite.move(0, speed *  2.0f);
@@ -29,13 +29,13 @@ public:
 		return continueFlight;
 	}
 
-	// for drawing the missile's sprite
+	// for drawing the bomb
 	Sprite getSprite()
 	{
 		return bombSprite;
 	}
 
-	// for collisions (check for collision with aliens)
+	// for collision checking functions
 	FloatRect getCollision()
 	{
 		return bombSprite.getGlobalBounds();
