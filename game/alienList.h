@@ -70,11 +70,15 @@ public:
 	bool checkCollision(FloatRect missileBounds)
 	{
 		bool hit = false;
+		list<alien>::iterator end;
 		list<alien>::iterator iter;
 		iter = alienWave.begin();
 		while (iter != alienWave.end() && !hit)
 		{
-			if (missileBounds.intersects(iter->getCollision())) hit = true;
+			if (missileBounds.intersects(iter->getCollision()))
+			{
+				hit = true;
+			}
 			else iter++;
 		}
 		if (hit) iter = alienWave.erase(iter);

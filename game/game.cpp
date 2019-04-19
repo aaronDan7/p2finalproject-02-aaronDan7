@@ -90,9 +90,15 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
+	Texture alien2T;
+	if (!alien2T.loadFromFile("alien2.png"))
+	{
+		cout << "Unable to load alien texture!" << endl;
+		exit(EXIT_FAILURE);
+	}
+
 	Sprite background;
 	background.setTexture(starsTexture);
-	//background.setScale(1.5, 1.5);
 
 	Sprite ship;
 	ship.setTexture(shipTexture);
@@ -131,7 +137,7 @@ int main()
 	ship.setPosition(shipX, shipY);
 
 	waveOne.addAliens(alienTexture, 10, window.getSize());
-	waveTwo.addAliens(alienTexture, 10, window.getSize());
+	waveTwo.addAliens(alien2T, 10, window.getSize());
 
 	int lifeCount = 3;
 	button livesRemain;
@@ -173,7 +179,7 @@ int main()
 			{
 				if (event.key.code == Keyboard::Space)
 				{
-					missiles.spawnMissile(missileTexture, ship.getPosition(), 2);
+					missiles.spawnMissile(missileTexture, ship.getPosition(), 20); // hard code 10 to delay spamfire
 				}
 			}
 		}
@@ -232,16 +238,16 @@ int main()
 			moveShip(ship);
 			window.draw(ship);
 
-			if (!(waveTwo.moveAlienWave(window, 0.6)))
+			if (!(waveTwo.moveAlienWave(window, 0.8)))
 			{
 				gameControl = "lose";
 			}
 			 
-			if (bombs.bombTimer(100, 20)) // hard code bomb timing
+			if (bombs.bombTimer(70, 20)) // hard code bomb timing
 			{
 				bombs.spawnBomb(bombTexture, waveTwo.getBombPos()); 
 			}
-			if (bombs.moveBombs(window, ship.getGlobalBounds(), 0.7))
+			if (bombs.moveBombs(window, ship.getGlobalBounds(), 0.9))
 			{
 				if (lifeCount > 2)
 				{
@@ -254,7 +260,9 @@ int main()
 					window.draw(ship3);
 				}
 				else
+				{
 					gameControl = "lose";
+				}
 			}		
 			missiles.moveMissiles(window, waveTwo);
 
@@ -267,6 +275,7 @@ int main()
 		// set game end/ restart
 		if (gameControl == "win")
 		{
+			start = false;
 			window.draw(win);
 		}
 		if (gameControl == "lose")

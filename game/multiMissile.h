@@ -14,10 +14,10 @@ private:
 	list<Missile> missileList;
 	int spawnDelay;
 public:
-	//instant fire//constructor
+	//constructor, delays missile fire off the start
 	multiMissile()
 	{
-		spawnDelay = 0;
+		spawnDelay = 60;
 	}
 
 	void spawnMissile(Texture &missileTexture, Vector2f shipPos, int spawnWaitTime)
