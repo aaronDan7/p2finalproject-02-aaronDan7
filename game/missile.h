@@ -5,22 +5,22 @@ using namespace sf;
 class Missile
 {
 private:
-	Sprite  missileSprite;
+	Sprite  missile;
 public:
 	// constructor take texture and ship position
 	Missile(Texture &missileTexture, Vector2f shipPos)
 	{
-		missileSprite.setTexture(missileTexture);
-		missileSprite.setPosition(shipPos.x + (2 * missileTexture.getSize().x), shipPos.y);
+		missile.setTexture(missileTexture);
+		missile.setPosition(shipPos.x + (2 * missileTexture.getSize().x), shipPos.y);
 	}
 
 	// move missiles and delete missed shots
 	bool moveUp()
 	{
 		bool continueFlight = true; 
-		if (missileSprite.getPosition().y > 0)
+		if (missile.getPosition().y > 0)
 		{
-			missileSprite.move(0, -4.0f);
+			missile.move(0, -4.0f);
 		}
 		else
 		{
@@ -31,12 +31,12 @@ public:
 	// for drawing the missile's sprite
 	Sprite getSprite()
 	{
-		return missileSprite;
+		return missile;
 	}
 
 	// when misssile hits alien
 	FloatRect getCollision()
 	{
-		return missileSprite.getGlobalBounds();
+		return missile.getGlobalBounds();
 	}
 };

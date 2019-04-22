@@ -68,14 +68,14 @@ public:
 	}
 
 	// check aliens for missile collision
-	bool checkCollision(FloatRect missileBounds)
+	bool checkCollision(FloatRect missileLoc)
 	{
 		bool hit = false;
 		list<alien>::iterator index;
 		index = alienWave.begin();
 		while (index != alienWave.end() && !hit)
 		{
-			if (missileBounds.intersects(index->getCollision()))
+			if (missileLoc.intersects(index->getCollision()))
 			{
 				hit = true;
 			}

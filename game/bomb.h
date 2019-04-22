@@ -5,22 +5,22 @@ using namespace sf;
 class Bomb
 {
 private:
-	Sprite  bombSprite;
+	Sprite  singleBomb;
 public:
 	// constructor
 	Bomb(Texture &bombTexture, Vector2f alienPos)
 	{
-		bombSprite.setTexture(bombTexture);
-		bombSprite.setPosition(alienPos.x + (2 * bombTexture.getSize().x - 30), alienPos.y + 20);
+		singleBomb.setTexture(bombTexture);
+		singleBomb.setPosition(alienPos.x + (2 * bombTexture.getSize().x - 30), alienPos.y + 20);
 	}
 
 	// check input and set speed
-	bool moveDown(float windH, float speed)
+	bool moveDown(float windowSize, float speed)
 	{
 		bool continueFlight = true; 
-		if (bombSprite.getPosition().y < windH)
+		if (singleBomb.getPosition().y < windowSize)
 		{
-			bombSprite.move(0, speed *  2.0f);
+			singleBomb.move(0, speed *  2.0f);
 		}
 		else
 		{
@@ -32,12 +32,12 @@ public:
 	// for drawing the bomb
 	Sprite getSprite()
 	{
-		return bombSprite;
+		return singleBomb;
 	}
 
 	// for collision checking functions
 	FloatRect getCollision()
 	{
-		return bombSprite.getGlobalBounds();
+		return singleBomb.getGlobalBounds();
 	}
 };
