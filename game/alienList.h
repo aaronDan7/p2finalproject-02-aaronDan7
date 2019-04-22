@@ -104,4 +104,10 @@ public:
 		}
 		return win;
 	}
+
+	/*void clear(bool test)
+	{
+		if (test == false)
+			alienWave.clear;
+	}*/
 };

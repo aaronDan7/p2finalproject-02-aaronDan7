@@ -299,6 +299,7 @@ int main()
 					}
 				}
 
+				// waveTwo.clear(start);
 				window.clear();
 				window.draw(lose);
 				txtDisplay.displayStart(window);
