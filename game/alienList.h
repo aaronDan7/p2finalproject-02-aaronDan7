@@ -80,7 +80,12 @@ public:
 				hit = true;
 			}
 			else index++;
-		}		
+		}	
+		if (alienWave.empty())
+		{
+			return true;
+		}
+		else
 		if (hit)
 		{
 			alienWave.erase(index);
